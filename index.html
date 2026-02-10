@@ -1,177 +1,104 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yılan Oyunu | KralOyun Tarzı</title>
+    <title>ManyakOyun | Aksiyon Merkezi</title>
     <style>
         body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: #2c3e50; /* Koyu arka plan */
-            color: white;
+            background-color: #0f0f0f;
+            color: #ffffff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin-top: 50px;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        header {
+            background: linear-gradient(90deg, #8b0000, #ff0000);
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4);
         }
         h1 {
-            color: #f1c40f; /* Sarıntrak başlık */
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin: 0;
+            font-size: 36px;
+            text-shadow: 2px 2px 4px #000;
         }
-        #score {
-            font-size: 24px;
+        p.subtitle {
+            margin-top: 5px;
+            font-size: 16px;
+            color: #f1c40f;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        /* Oyunların yan yana dizilmesi için Grid sistemi */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+        .game-card {
+            background-color: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+        .game-card:hover {
+            transform: scale(1.02);
+            border-color: #e74c3c;
+        }
+        .game-title {
+            font-size: 20px;
             font-weight: bold;
-            margin-bottom: 20px;
-            color: #e74c3c;
+            margin-bottom: 15px;
+            color: #ecf0f1;
         }
-        canvas {
-            background-color: #ecf0f1; /* Açık renk oyun alanı */
-            border: 5px solid #34495e;
+        /* Oyun pencereleri (iframe) */
+        iframe {
+            width: 100%;
+            height: 350px;
+            border: none;
             border-radius: 5px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
-        }
-        p {
-            margin-top: 15px;
-            color: #bdc3c7;
-            font-size: 14px;
+            background-color: #000;
         }
     </style>
 </head>
 <body>
 
-    <h1>Kral Yılan</h1>
-    <div id="score">Skor: 0</div>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
-    <p>Oynamak için klavyendeki YÖN TUŞLARINI kullan.</p>
+    <header>
+        <h1>🔥 MANYAK OYUN 🔥</h1>
+        <p class="subtitle">Aksiyon Merkezi - Savaş, Hayatta Kal ve Kazan!</p>
+    </header>
 
-    <script>
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
-
-        // Yılanın başlangıç konumu ve parçaları
-        let snake = [
-            {x: 200, y: 200},
-            {x: 190, y: 200},
-            {x: 180, y: 200}
-        ];
-
-        let score = 0;
-        let dx = 10; // X eksenindeki hız
-        let dy = 0;  // Y eksenindeki hız
-        let foodX;
-        let foodY;
-        let changingDirection = false;
-
-        // Oyunu Başlat
-        main();
-        createFood();
-
-        document.addEventListener("keydown", changeDirection);
-
-        function main() {
-            if (hasGameEnded()) {
-                alert("Oyun Bitti! Skorun: " + score + "\nYeniden başlamak için sayfayı yenile.");
-                return;
-            }
-
-            changingDirection = false;
-            setTimeout(function onTick() {
-                clearCanvas();
-                drawFood();
-                advanceSnake();
-                drawSnake();
-                main();
-            }, 100) // Oyun hızı (Milisaniye)
-        }
-
-        function clearCanvas() {
-            ctx.fillStyle = "#ecf0f1";
-            ctx.strokeStyle = "#bdc3c7";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeRect(0, 0, canvas.width, canvas.height);
-        }
-
-        function drawSnake() {
-            snake.forEach(drawSnakePart);
-        }
-
-        function drawSnakePart(snakePart) {
-            ctx.fillStyle = "#2ecc71"; // Yılanın rengi
-            ctx.strokeStyle = "#27ae60";
-            ctx.fillRect(snakePart.x, snakePart.y, 10, 10);
-            ctx.strokeRect(snakePart.x, snakePart.y, 10, 10);
-        }
-
-        function advanceSnake() {
-            const head = {x: snake[0].x + dx, y: snake[0].y + dy};
-            snake.unshift(head);
-
-            const hasEatenFood = snake[0].x === foodX && snake[0].y === foodY;
-            if (hasEatenFood) {
-                score += 10;
-                document.getElementById('score').innerHTML = "Skor: " + score;
-                createFood();
-            } else {
-                snake.pop(); // Yem yemezse kuyruğu sil (boyut sabit kalsın)
-            }
-        }
-
-        function drawFood() {
-            ctx.fillStyle = "#e74c3c"; // Yemin rengi
-            ctx.strokeStyle = "#c0392b";
-            ctx.fillRect(foodX, foodY, 10, 10);
-            ctx.strokeRect(foodX, foodY, 10, 10);
-        }
-
-        function randomTen(min, max) {
-            return Math.round((Math.random() * (max - min) + min) / 10) * 10;
-        }
-
-        function createFood() {
-            foodX = randomTen(0, canvas.width - 10);
-            foodY = randomTen(0, canvas.height - 10);
+    <div class="container">
+        <div class="game-grid">
             
-            // Yem yılanın üstünde çıkarsa tekrar oluştur
-            snake.forEach(function isFoodOnSnake(part) {
-                if (part.x == foodX && part.y == foodY) createFood();
-            });
-        }
+            <div class="game-card">
+                <div class="game-title">Venge.io (Online Çatışma)</div>
+                <iframe src="https://www.crazygames.com/embed/venge-io" allowfullscreen></iframe>
+            </div>
 
-        function changeDirection(event) {
-            const LEFT_KEY = 37;
-            const RIGHT_KEY = 39;
-            const UP_KEY = 38;
-            const DOWN_KEY = 40;
+            <div class="game-card">
+                <div class="game-title">Smash Karts (Çarpışan Arabalar)</div>
+                <iframe src="https://www.crazygames.com/embed/smash-karts" allowfullscreen></iframe>
+            </div>
 
-            if (changingDirection) return;
-            changingDirection = true;
+            <div class="game-card">
+                <div class="game-title">Shell Shockers (Yumurta FPS)</div>
+                <iframe src="https://www.crazygames.com/embed/shellshockersio" allowfullscreen></iframe>
+            </div>
 
-            const keyPressed = event.keyCode;
-            const goingUp = dy === -10;
-            const goingDown = dy === 10;
-            const goingRight = dx === 10;
-            const goingLeft = dx === -10;
+            <div class="game-card">
+                <div class="game-title">Time Shooter 3 (Zamanı Durdur)</div>
+                <iframe src="https://www.crazygames.com/embed/time-shooter-3-swat" allowfullscreen></iframe>
+            </div>
 
-            if (keyPressed === LEFT_KEY && !goingRight) { dx = -10; dy = 0; }
-            if (keyPressed === UP_KEY && !goingDown) { dx = 0; dy = -10; }
-            if (keyPressed === RIGHT_KEY && !goingLeft) { dx = 10; dy = 0; }
-            if (keyPressed === DOWN_KEY && !goingUp) { dx = 0; dy = 10; }
-        }
+        </div>
+    </div>
 
-        function hasGameEnded() {
-            // Kendi kendine çarpma kontrolü
-            for (let i = 4; i < snake.length; i++) {
-                if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) return true;
-            }
-            // Duvara çarpma kontrolü
-            const hitLeftWall = snake[0].x < 0;
-            const hitRightWall = snake[0].x >= canvas.width;
-            const hitTopWall = snake[0].y < 0;
-            const hitBottomWall = snake[0].y >= canvas.height;
-
-            return hitLeftWall || hitRightWall || hitTopWall || hitBottomWall;
-        }
-    </script>
 </body>
 </html>
