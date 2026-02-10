@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yılan Oyunu | KralOyun Tarzı</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #2c3e50; /* Koyu arka plan */
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin-top: 50px;
+        }
+        h1 {
+            color: #f1c40f; /* Sarıntrak başlık */
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        #score {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #e74c3c;
+        }
+        canvas {
+            background-color: #ecf0f1; /* Açık renk oyun alanı */
+            border: 5px solid #34495e;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+        p {
+            margin-top: 15px;
+            color: #bdc3c7;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Kral Yılan</h1>
+    <div id="score">Skor: 0</div>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <p>Oynamak için klavyendeki YÖN TUŞLARINI kullan.</p>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Yılanın başlangıç konumu ve parçaları
+        let snake = [
+            {x: 200, y: 200},
+            {x: 190, y: 200},
+            {x: 180, y: 200}
+        ];
+
+        let score = 0;
+        let dx = 10; // X eksenindeki hız
+        let dy = 0;  // Y eksenindeki hız
+        let foodX;
+        let foodY;
+        let changingDirection = false;
+
+        // Oyunu Başlat
+        main();
+        createFood();
+
+        document.addEventListener("keydown", changeDirection);
+
+        function main() {
+            if (hasGameEnded()) {
+                alert("Oyun Bitti! Skorun: " + score + "\nYeniden başlamak için sayfayı yenile.");
+                return;
+            }
+
+            changingDirection = false;
+            setTimeout(function onTick() {
+                clearCanvas();
+                drawFood();
+                advanceSnake();
+                drawSnake();
+                main();
+            }, 100) // Oyun hızı (Milisaniye)
+        }
+
+        function clearCanvas() {
+            ctx.fillStyle = "#ecf0f1";
+            ctx.strokeStyle = "#bdc3c7";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function drawSnake() {
+            snake.forEach(drawSnakePart);
+        }
+
+        function drawSnakePart(snakePart) {
+            ctx.fillStyle = "#2ecc71"; // Yılanın rengi
+            ctx.strokeStyle = "#27ae60";
+            ctx.fillRect(snakePart.x, snakePart.y, 10, 10);
+            ctx.strokeRect(snakePart.x, snakePart.y, 10, 10);
+        }
+
+        function advanceSnake() {
+            const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+            snake.unshift(head);
+
+            const hasEatenFood = snake[0].x === foodX && snake[0].y === foodY;
+            if (hasEatenFood) {
+                score += 10;
+                document.getElementById('score').innerHTML = "Skor: " + score;
+                createFood();
+            } else {
+                snake.pop(); // Yem yemezse kuyruğu sil (boyut sabit kalsın)
+            }
+        }
+
+        function drawFood() {
+            ctx.fillStyle = "#e74c3c"; // Yemin rengi
+            ctx.strokeStyle = "#c0392b";
+            ctx.fillRect(foodX, foodY, 10, 10);
+            ctx.strokeRect(foodX, foodY, 10, 10);
+        }
+
+        function randomTen(min, max) {
+            return Math.round((Math.random() * (max - min) + min) / 10) * 10;
+        }
+
+        function createFood() {
+            foodX = randomTen(0, canvas.width - 10);
+            foodY = randomTen(0, canvas.height - 10);
+            
+            // Yem yılanın üstünde çıkarsa tekrar oluştur
+            snake.forEach(function isFoodOnSnake(part) {
+                if (part.x == foodX && part.y == foodY) createFood();
+            });
+        }
+
+        function changeDirection(event) {
+            const LEFT_KEY = 37;
+            const RIGHT_KEY = 39;
+            const UP_KEY = 38;
+            const DOWN_KEY = 40;
+
+            if (changingDirection) return;
+            changingDirection = true;
+
+            const keyPressed = event.keyCode;
+            const goingUp = dy === -10;
+            const goingDown = dy === 10;
+            const goingRight = dx === 10;
+            const goingLeft = dx === -10;
+
+            if (keyPressed === LEFT_KEY && !goingRight) { dx = -10; dy = 0; }
+            if (keyPressed === UP_KEY && !goingDown) { dx = 0; dy = -10; }
+            if (keyPressed === RIGHT_KEY && !goingLeft) { dx = 10; dy = 0; }
+            if (keyPressed === DOWN_KEY && !goingUp) { dx = 0; dy = 10; }
+        }
+
+        function hasGameEnded() {
+            // Kendi kendine çarpma kontrolü
+            for (let i = 4; i < snake.length; i++) {
+                if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) return true;
+            }
+            // Duvara çarpma kontrolü
+            const hitLeftWall = snake[0].x < 0;
+            const hitRightWall = snake[0].x >= canvas.width;
+            const hitTopWall = snake[0].y < 0;
+            const hitBottomWall = snake[0].y >= canvas.height;
+
+            return hitLeftWall || hitRightWall || hitTopWall || hitBottomWall;
+        }
+    </script>
+</body>
+</html>
