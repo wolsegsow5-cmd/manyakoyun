@@ -1,68 +1,110 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ManyakOyun | Aksiyon Merkezi</title>
+    <title>Akınato Gaming | Manyak Oyun</title>
     <style>
         body {
-            background-color: #0f0f0f;
-            color: #ffffff;
+            background-color: #0b0c10;
+            color: #c5c6c7;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
             text-align: center;
         }
         header {
-            background: linear-gradient(90deg, #8b0000, #ff0000);
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4);
+            background: linear-gradient(180deg, #1f2833, #0b0c10);
+            padding: 40px 20px;
+            border-bottom: 3px solid #66fcf1;
+            box-shadow: 0 4px 20px rgba(102, 252, 241, 0.2);
         }
         h1 {
             margin: 0;
-            font-size: 36px;
-            text-shadow: 2px 2px 4px #000;
+            font-size: 55px;
+            color: #66fcf1;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px #66fcf1, 0 0 20px #66fcf1, 0 0 40px #66fcf1;
         }
-        p.subtitle {
-            margin-top: 5px;
-            font-size: 16px;
-            color: #f1c40f;
+        .subtitle {
+            margin-top: 10px;
+            font-size: 22px;
+            color: #45a29e;
+            font-weight: bold;
+            letter-spacing: 2px;
         }
+        
+        /* Dikkat Çeken Kayan Tekli Yazılar */
+        .attention-container {
+            margin-top: 25px;
+            height: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+        .attention-texts {
+            font-size: 26px;
+            font-weight: 900;
+            color: #ff003c;
+            text-transform: uppercase;
+            animation: slideUp 8s infinite;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .attention-texts span {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 2px 2px 0px #fff, -1px -1px 0px #fff;
+            letter-spacing: 1px;
+        }
+
+        /* Yazıların yukarı kayma animasyonu */
+        @keyframes slideUp {
+            0%, 20% { transform: translateY(0); }
+            25%, 45% { transform: translateY(-40px); }
+            50%, 70% { transform: translateY(-80px); }
+            75%, 95% { transform: translateY(-120px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Oyunlar Bölümü */
         .container {
             max-width: 1200px;
-            margin: 30px auto;
+            margin: 40px auto;
             padding: 0 20px;
         }
-        /* Oyunların yan yana dizilmesi için Grid sistemi */
         .game-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 30px;
         }
         .game-card {
-            background-color: #1a1a1a;
-            border: 2px solid #333;
-            border-radius: 10px;
+            background-color: #1f2833;
+            border: 2px solid #45a29e;
+            border-radius: 12px;
             padding: 15px;
-            transition: transform 0.3s, border-color 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
         .game-card:hover {
-            transform: scale(1.02);
-            border-color: #e74c3c;
+            transform: translateY(-10px);
+            border-color: #66fcf1;
+            box-shadow: 0 15px 30px rgba(102, 252, 241, 0.4);
         }
         .game-title {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
             margin-bottom: 15px;
-            color: #ecf0f1;
+            color: #ffffff;
         }
-        /* Oyun pencereleri (iframe) */
         iframe {
             width: 100%;
             height: 350px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             background-color: #000;
         }
     </style>
@@ -70,8 +112,17 @@
 <body>
 
     <header>
-        <h1>🔥 MANYAK OYUN 🔥</h1>
-        <p class="subtitle">Aksiyon Merkezi - Savaş, Hayatta Kal ve Kazan!</p>
+        <h1>AKINATO GAMING</h1>
+        <div class="subtitle">MANYAK OYUN BAŞLANGIÇ</div>
+        
+        <div class="attention-container">
+            <div class="attention-texts">
+                <span>⚔️ EFSANENİ YAZ ⚔️</span>
+                <span>🔥 AKSİYONA KATIL 🔥</span>
+                <span>⚡ SINIRLARI ZORLA ⚡</span>
+                <span>🎯 HEDEFİ VUR 🎯</span>
+            </div>
+        </div>
     </header>
 
     <div class="container">
@@ -93,7 +144,7 @@
             </div>
 
             <div class="game-card">
-                <div class="game-title">Time Shooter 3 (Zamanı Durdur)</div>
+                <div class="game-title">Time Shooter 3 (Ağır Çekim)</div>
                 <iframe src="https://www.crazygames.com/embed/time-shooter-3-swat" allowfullscreen></iframe>
             </div>
 
